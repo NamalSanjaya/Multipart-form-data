@@ -2,11 +2,14 @@
 
 /*------------------------------------------------------------------------------*/
 
+/**
+ * 
+ * @param {string} pattern <YY:MM:DD>
+ * @returns {object} { date , year , month , day } 
+ */
+
 let date_Seperate= function(pattern){
-    /* 
-        input : str <YY:MM:DD>
-        output: { date , year , month , day }
-    */
+  
     let regY , regM , regD ;
     let year , month , day ;
 
@@ -30,11 +33,14 @@ let date_Seperate= function(pattern){
 
 /* -------------------------------------------------------------------------------*/
 
+/**
+ * 
+ * @param {string} pattern 
+ * @returns {object} { date , time }
+ */
+
 let seperate_datetime = function(pattern){
-    /* 
-        Input  : str <YY:MM:DD'T'Hr:Min>
-        Output : object { date , time } 
-    */
+   
     let DateTime , date , time ;
     try {
         let DT_Arr = pattern.split('T')
@@ -53,11 +59,12 @@ let seperate_datetime = function(pattern){
 
 /*-----------------------------------------------------------------------------------*/
 
+/**
+ * 
+ * @param {string} pattern 
+ * @returns {object} { hour , minute }
+ */
 let time_Seperate = function(pattern){
-    /* 
-        Input  : str <Hr:min>
-        Output : object { hour , minute }
-    */
 
     let regHour , regMinute , hour,minute;
     regHour = /([0-1][0-9]|2[0-3])/ ;
@@ -76,11 +83,14 @@ let time_Seperate = function(pattern){
 
 /*--------------------------------------------------------------------------------------*/
 
+/**
+ * 
+ * @param {string} pattern 
+ * @returns {object}  {date,year,month}
+ */
+
 let month_Seperate = function(pattern){
-    /* 
-        Input  : str<year-mon>
-        Output : {date,year,month}
-    */
+
     let regY , regM ;
     regY = /^[0-9]{4}/ ;
     regM = /-(0[1-9]|1[0-2])$/ ;
@@ -102,6 +112,12 @@ let month_Seperate = function(pattern){
 }
 
 /*--------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ * @param {string} pattern 
+ * @returns {object} {year,week}
+ */
 
 let week_Seperate = function(pattern){
     let regYear , regWeek,year ;
