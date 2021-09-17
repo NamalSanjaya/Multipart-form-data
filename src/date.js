@@ -4,7 +4,7 @@
 
 /**
  * 
- * @param {string} pattern <YY:MM:DD>
+ * @param {string} pattern <YY-MM-DD>
  * @returns {object} { date , year , month , day } 
  */
 
@@ -35,7 +35,7 @@ let date_Seperate= function(pattern){
 
 /**
  * 
- * @param {string} pattern 
+ * @param {string} pattern <YY-MM-DD T Hr:Min>
  * @returns {object} { date , time }
  */
 
@@ -61,7 +61,7 @@ let seperate_datetime = function(pattern){
 
 /**
  * 
- * @param {string} pattern 
+ * @param {string} pattern <Hr:Min>
  * @returns {object} { hour , minute }
  */
 let time_Seperate = function(pattern){
@@ -85,7 +85,7 @@ let time_Seperate = function(pattern){
 
 /**
  * 
- * @param {string} pattern 
+ * @param {string} pattern <YY-MM>
  * @returns {object}  {date,year,month}
  */
 
@@ -115,7 +115,7 @@ let month_Seperate = function(pattern){
 
 /**
  * 
- * @param {string} pattern 
+ * @param {string} pattern <YY-WW>
  * @returns {object} {year,week}
  */
 
