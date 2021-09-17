@@ -1,6 +1,6 @@
 const http = require('http')
 const fs = require('fs')
-const { bodyParser } = require('../src/Main');
+const { bodyParser } = require('../Main');
 
 let home = fs.readFileSync('home.html');
 

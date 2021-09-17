@@ -1,0 +1,25 @@
+{
+  "name": "multipart-formdata",
+  "version": "1.0.0",
+  "description": "To parase multipart form data body to a JSON object",
+  "main": "Main.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NamalSanjaya/Multipart-form-data.git"
+  },
+  "keywords": [
+    "multipart-form-data"
+  ],
+  "author": "namalsanjaya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NamalSanjaya/Multipart-form-data/issues"
+  },
+  "homepage": "https://github.com/NamalSanjaya/Multipart-form-data#readme"
+}
