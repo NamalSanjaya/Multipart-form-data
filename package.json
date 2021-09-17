@@ -1,6 +1,6 @@
 {
   "name": "simple-multipart-formdata",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "To parase multipart form data body to a JSON object",
   "main": "Main.js",
   "directories": {
