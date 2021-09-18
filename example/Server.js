@@ -1,5 +1,5 @@
 const http = require('http')
-const fs = require('fs')
+const fs = require('fs');
 const { bodyParser } = require('../Main');
 
 let home = fs.readFileSync('home.html');
@@ -12,19 +12,24 @@ const Server = http.createServer( (req,res)=> {
         return
    }
    else if(req.method == "POST"){
-       let Info =``;
+       let Index=0,message='';
         req
             .once('readable' , ()=> {
                 console.log('Start Reading....');
+                buffer = Buffer.alloc(size=1000 ,fill=0 , encoding='utf8')
             })
             .on('data' , (data)=> {
-                console.log( `Reading....` );
-                Info += data.toString();
+
+                Index += data.length ; 
+                console.log( `Reading....${Index}` );
+                message += data.toString();
+                
             })
             .on('end',()=> {
-                let pharsedInfo = bodyParser(Info);
-                res.writeHead( 200 , { 'Content-Type':'application/json' } );
-                res.end( JSON.stringify(pharsedInfo) ) 
+                let output = bodyParser(message);
+                console.log( output );
+                res.writeHead( 200 , { 'Content-Type':'text/plain' } );
+                res.end( message ) ;
                 return
         })
    }
@@ -33,4 +38,4 @@ const Server = http.createServer( (req,res)=> {
    }
 })
 
-Server.listen( 8080 , ()=> console.log('Listening 8080....') )
+Server.listen( 8000 , ()=> console.log('Listening 8000....') );
