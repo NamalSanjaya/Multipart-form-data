@@ -169,6 +169,6 @@ let bodyParser = function(Message){
 
 /*-----------------------------------------------------------------------------------*/
 
-module.exports = { bodyParser }
+module.exports = { bodyParser , extractInfo }
 
 
