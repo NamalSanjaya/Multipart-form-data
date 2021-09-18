@@ -1,55 +1,96 @@
 const dateAPI = require('./src/date');
+const fs = require('fs');
+const {fileHandler, FileHandler}  = require('./src/file-handler')
+
+let upperBndReg , bottomBndReg , aBreg , aFBreg , aVreg1 , aVreg2 , aKreg , filereg;
+let globalFile ; // global file variable
+
+upperBndReg  = /-{6}[^-]ebKitFormBoundary.{16}/g;
+bottomBndReg = /--$/g ;
+aBreg        = /name=.+/g ;
+aFBreg       = /filename=.+/g;
+aVreg1       =  /Content-Disposition:.+/g;
+aVreg2       = /Content-Type:.+/g ; 
+aKreg        = /name=/g ;
+colreg       = /"/g ;
+filereg      = /filename=/g;
+
+
+/*------------------------------------------------------------- */
+/**
+ * 
+ * @param {string} exp  <-- akeyBefore
+ */
+
+ let forFileSep = function(exp){
+    let toArray = exp.split(';');
+    let forKey = toArray[0] , forValue = toArray[1];
+    let fileKey = forKey.replace(aKreg ,'').replace(colreg , '').trim() ; 
+    let fileValue = forValue.replace( filereg ,'').replace(colreg,'').trim();
+
+    return [fileKey,fileValue] ;
+}
 
 /*--------------------------------------------------------------------------------------*/
 
+
 /**
- * @description  get field-data from raw message 
- * @param {String}   formData  - Raw message
- * @returns {object} container - <field:value>
+ * @description  store data in a JSON file 
+ * @param {string} msgBody  raw multipart-form-data
+ * 
  */
 
-let extractInfo = function(formData){
-    let upperBndReg , bottomBndReg , regKey1 , regKey2 , regKey3, regKey4,regVal1 , regVal2;
-    let Value , Key , container = {} ;
+ let extractJSON = function( msgBody){
 
-    upperBndReg  = /-{6}[^-]ebKitFormBoundary.{16}/g;
-    bottomBndReg = /--$/g;
-    regKey1 = /name=.+/g;
-    regKey2 = /\r\n.+/g ;
-    regKey3 = /name=/ ;
-    regKey4 = /Content-Disposition:.+/g ;
-    regVal1 = /\n\n/ ;
-    regVal2 = /"/g ;
+    let aKeyBefore , aValue ,aFileBefore , aKey , sepFile;
+    let rawJSONdata = {} , forJSONfile = {} ;
 
     try {
-        let withoutUpperBnd= formData.replace(upperBndReg,'');
-        withoutUpperBnd = withoutUpperBnd.trim();
-        let withoutLowerBnd = withoutUpperBnd.replace(bottomBndReg,'');
-        let withoutHeader = withoutLowerBnd.replace(regKey4 , '');
+        let withoutBottom = msgBody.replace( bottomBndReg , '');
+        let fieldArray    = withoutBottom.split( upperBndReg );
 
-        let keySet = withoutLowerBnd.match(regKey1);
-        let valueSet = withoutHeader.match(regKey2);
-       
-        let len = valueSet.length;
-    
-        for(let ind=0 ;ind<len ; ind++){
-            elemKey = keySet[ind] ; 
-            elemVal = valueSet[ind].trim();
+        // remover unnecessay elements
+        fieldArray.pop(); 
+        fieldArray.shift() ;
+        fieldArray.forEach((element)=> {
+            aKeyBefore = element.match(aBreg)[0];
+            aFileBefore = aKeyBefore.match(aFBreg);
+            aValue = element.replace( aVreg1 , '').replace( aVreg2 , '').trim();
+                if(aFileBefore){
+                    sepFile = forFileSep(aKeyBefore);
+                    forJSONfile[ sepFile[0] ]  = sepFile[1] ; 
+                    aKey   = sepFile[0] ; 
+                   
+                }
+                else{
+                    aKey = aKeyBefore.replace( aKreg ,'').replace(colreg , '').trim();
+                }
+
+                rawJSONdata[aKey] = aValue;
+
+        })
+        let toWrite = JSON.stringify({rawJSONdata,forJSONfile} );
+        fs.writeFileSync('../temp/rawData.json' , toWrite);
+
+        return 
             
-            Key = elemKey.replace(regKey3,'').replace(regVal2,'')
-            Value  = elemVal.replace(regVal1,'');
-            container[Key] = Value ;
-        }
-        
     } catch (error) {
-        return {}
+        throw new Error('Error! : around extractJSON() function!');
     }
 
-    return container ;
 }
 
 /*----------------------------------------------------------------------------------*/
 
+// to read the data in JSON file
+let readData = function(){
+
+    let fromRead = fs.readFileSync('../temp/rawData.json' ) ;
+    return JSON.parse( (fromRead.toString()) ) ;
+   
+}
+
+/*----------------------------------------------------------------------------------*/
 /**
  * @description To get the type of input field
  * @summary { date:1 , datetime-local:2 , month:3 , week:4 }
@@ -57,9 +98,13 @@ let extractInfo = function(formData){
  * @returns {Number}  - State of the given input field
  */
 
-let guessFieldType = function(aField){
+let guessFieldType = function(aField , aKey){
+    aKey = aKey || null ;
 
-    if( isDateFUNC(aField) ) { 
+    if( isAFile(aKey) ){
+        return 6;
+    }
+    else if( isDateFUNC(aField) ) { 
         return 1 ; 
     }
     else if( isDateTime_LocalFUNC(aField) ) { 
@@ -76,6 +121,19 @@ let guessFieldType = function(aField){
     }
     return 0 ;
 }
+
+/*---------------------------------------------------------------------------------*/
+
+let isAFile = function(aKEY){
+    if(aKEY){
+        if( globalFile.hasOwnProperty(aKEY) ){
+            return true ;
+        }
+        return false ;
+    }
+    return false;
+}
+
 
 /*-----------------------------------------------------------------------------------*/
 
@@ -128,47 +186,63 @@ let isTime = function(aField){
 
 /*-----------------------------------------------------------------------------------*/
 
+let initizeAPI = function(){
+    return new FileHandler();
+}
+
+/*----------------------------------------------------------------------------------*/
 /**
  * @description  parser the mutipart form data into an object
  * @param {string}   Message - raw message
- * @returns {object} Result  - <field:value> 
+ * @returns {object}   { document , API } 
+ * document <field:value> | API - for file saving
  */
 let bodyParser = function(Message){
-    let Result = {} ;
-    let AllFields =  extractInfo( Message );
-  
-    for(let [aKey,aValue] of Object.entries( AllFields ) ){
+    let document = {} , cnt = 0 , API = null;
+    extractJSON(Message);
 
-        let FieldType = guessFieldType( aValue );
+    let { rawJSONdata ,  forJSONfile } = readData() ;
+    globalFile = forJSONfile ;
+
+    for(let [aKey,aValue] of Object.entries(rawJSONdata) ){
+
+        let FieldType = guessFieldType( aValue , aKey );
 
         if(FieldType==0){
-            Result[aKey] = aValue ;
+            document[aKey] = aValue ;
         }
         else if(FieldType==1){
-            Result[aKey] = dateAPI.date_Seperate(aValue);
+            document[aKey] = dateAPI.date_Seperate(aValue);
         }
         else if( FieldType==2){
             let {date,time} = dateAPI.seperate_datetime(aValue);
             let datePortion = dateAPI.date_Seperate(date);
             let timePortion = dateAPI.time_Seperate(time);
-            Result[aKey]    = dateAPI.combineDateTime(datePortion,timePortion);
+            document[aKey]    = dateAPI.combineDateTime(datePortion,timePortion);
         }
         else if( FieldType==3 ){
-            Result[aKey] = dateAPI.month_Seperate(aValue);
+            document[aKey] = dateAPI.month_Seperate(aValue);
         }
         else if( FieldType==4 ){
-            Result[aKey] = dateAPI.week_Seperate(aValue);
+            document[aKey] = dateAPI.week_Seperate(aValue);
         }
         else if( FieldType==5 ){
-            Result[aKey]  = dateAPI.time_Seperate(aValue);
+            document[aKey]  = dateAPI.time_Seperate(aValue);
+        }
+        else if( FieldType==6 ){
+           document[aKey] = forJSONfile[aKey] ;
+           cnt++ ;
         }
 
     }
-    return Result ;
+
+    if(cnt>0){ API = initizeAPI(); }
+
+    return { document , API };
 }
 
 /*-----------------------------------------------------------------------------------*/
 
-module.exports = { bodyParser , extractInfo }
+module.exports = { bodyParser , globalFile }
 
 

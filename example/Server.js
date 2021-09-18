@@ -1,5 +1,6 @@
 const http = require('http')
 const fs = require('fs');
+const { bodyParser } = require('../Main');
 
 let home = fs.readFileSync('home.html');
 
@@ -25,7 +26,8 @@ const Server = http.createServer( (req,res)=> {
                 
             })
             .on('end',()=> {
-                console.log( message ) ;
+                let output = bodyParser(message);
+                console.log( output );
                 res.writeHead( 200 , { 'Content-Type':'text/plain' } );
                 res.end( message ) ;
                 return
@@ -36,4 +38,4 @@ const Server = http.createServer( (req,res)=> {
    }
 })
 
-Server.listen( 8000 , ()=> console.log('Listening 8000....') )
+Server.listen( 8000 , ()=> console.log('Listening 8000....') );
