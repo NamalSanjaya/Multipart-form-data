@@ -16,18 +16,21 @@ const Server = http.createServer( (req,res)=> {
         req
             .once('readable' , ()=> {
                 console.log('Start Reading....');
-                buffer = Buffer.alloc(size=1000 ,fill=0 , encoding='utf8')
+                buffer = Buffer.alloc(size=3000 ,fill=0 , encoding='utf8')
             })
             .on('data' , (data)=> {
 
                 Index += data.length ; 
-                console.log( `Reading....${Index}` );
+                console.log( `Reading....` );
                 message += data.toString();
                 
             })
             .on('end',()=> {
-                let output = bodyParser(message);
-                console.log( output );
+                //let {document,API} = bodyParser(message);
+                //let state = API.saveAll('E:\\Namal_works\\NPM-projects\\bodyparser\\multiPart-formData\\errors');
+
+                //console.log( document , state );
+
                 res.writeHead( 200 , { 'Content-Type':'text/plain' } );
                 res.end( message ) ;
                 return
