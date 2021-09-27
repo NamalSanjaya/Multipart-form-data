@@ -143,4 +143,58 @@ let combineDateTime = function(dateObj , timeObj){
     return Object.assign(dateObj,timeObj);
 }
 
-module.exports = { date_Seperate , seperate_datetime , time_Seperate , month_Seperate , week_Seperate , combineDateTime}
+/*-----------------------------------------------------------------------------------*/
+
+let isDateFUNC =  function(aField){
+    let regDate = /^[0-9]{4}(-[0-9]{2}){2}$/ ;
+    let isItDate =   aField.match(regDate);
+    
+    if(isItDate){ return true ; }
+    return false ;
+}
+
+/*-----------------------------------------------------------------------------------*/
+
+let isDateTime_LocalFUNC = function(aField){
+    let regDate = /^[0-9]{4}(-[0-9]{2}){2}T[0-9]{2}:[0-9]{2}$/ ;
+
+    let isItFntDate = aField.match(regDate);
+    if( isItFntDate ){ return true ; }
+    return false ;
+}
+
+/*-----------------------------------------------------------------------------------*/
+
+let isMonthFUNC = function(aField){
+    let regMon = /^[0-9]{4}-[0-9]{2}$/ ;
+
+    let isItMonth = aField.match(regMon);
+    if( isItMonth ){ return true ;}
+    return false ;   
+}
+
+/*-----------------------------------------------------------------------------------*/
+
+let isWeekFUNC = function(aField){
+    let regWeek = /^[0-9]{4}-W[0-9]{2}$/ ; 
+
+    let isItWeek = aField.match(regWeek);
+    if(isItWeek){ return true ;}
+    return false ;
+}
+
+/*-----------------------------------------------------------------------------------*/
+
+let isTime = function(aField){
+    let regTime = /^[0-9]{2}:[0-9]{2}$/ ;
+    let isItTime = aField.match(regTime);
+    if(isItTime){ return true ;}
+    return false ;
+}
+
+/*-----------------------------------------------------------------------------------*/
+
+
+module.exports = { date_Seperate , seperate_datetime , time_Seperate , month_Seperate , week_Seperate , combineDateTime ,
+    isDateFUNC, isDateTime_LocalFUNC, isMonthFUNC, isWeekFUNC, isTime }
+

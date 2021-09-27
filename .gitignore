@@ -1,4 +1,9 @@
 *.png
-test
-.vscode
-temp
+test/
+.vscode/
+temp/
+errors/
+node_modules/
+package-lock.json
+example/
+*.txt

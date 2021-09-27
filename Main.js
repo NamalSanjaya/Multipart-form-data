@@ -1,9 +1,10 @@
 const dateAPI = require('./src/date');
 const fs = require('fs');
-const {fileHandler, FileHandler}  = require('./src/file-handler')
+const {FileHandler,readData,dbPath}  = require('./src/file-handler')
+const {isDateFUNC,isDateTime_LocalFUNC,isMonthFUNC,isWeekFUNC,isTime} = dateAPI ;
 
 let upperBndReg , bottomBndReg , aBreg , aFBreg , aVreg1 , aVreg2 , aKreg , filereg;
-let globalFile ; // global file variable
+
 
 upperBndReg  = /-{6}[^-]ebKitFormBoundary.{16}/g;
 bottomBndReg = /--$/g ;
@@ -15,6 +16,9 @@ aKreg        = /name=/g ;
 colreg       = /"/g ;
 filereg      = /filename=/g;
 
+/*-----------------------------------*/
+
+let globalFile ;                         //  Info about files {object} <HTMLTAG name : filename>
 
 /*------------------------------------------------------------- */
 /**
@@ -51,7 +55,8 @@ filereg      = /filename=/g;
 
         // remover unnecessay elements
         fieldArray.pop(); 
-        fieldArray.shift() ;
+        fieldArray.shift();
+
         fieldArray.forEach((element)=> {
             aKeyBefore = element.match(aBreg)[0];
             aFileBefore = aKeyBefore.match(aFBreg);
@@ -60,7 +65,7 @@ filereg      = /filename=/g;
                     sepFile = forFileSep(aKeyBefore);
                     forJSONfile[ sepFile[0] ]  = sepFile[1] ; 
                     aKey   = sepFile[0] ; 
-                   
+                    aValue = Buffer.from( aValue );
                 }
                 else{
                     aKey = aKeyBefore.replace( aKreg ,'').replace(colreg , '').trim();
@@ -70,7 +75,7 @@ filereg      = /filename=/g;
 
         })
         let toWrite = JSON.stringify({rawJSONdata,forJSONfile} );
-        fs.writeFileSync('../temp/rawData.json' , toWrite);
+        fs.writeFileSync( dbPath , toWrite);
 
         return 
             
@@ -80,17 +85,6 @@ filereg      = /filename=/g;
 
 }
 
-/*----------------------------------------------------------------------------------*/
-
-// to read the data in JSON file
-let readData = function(){
-
-    let fromRead = fs.readFileSync('../temp/rawData.json' ) ;
-    return JSON.parse( (fromRead.toString()) ) ;
-   
-}
-
-/*----------------------------------------------------------------------------------*/
 /**
  * @description To get the type of input field
  * @summary { date:1 , datetime-local:2 , month:3 , week:4 }
@@ -134,63 +128,14 @@ let isAFile = function(aKEY){
     return false;
 }
 
-
-/*-----------------------------------------------------------------------------------*/
-
-let isDateFUNC = function(aField){
-    let regDate = /^[0-9]{4}(-[0-9]{2}){2}$/ ;
-    let isItDate =   aField.match(regDate);
-    
-    if(isItDate){ return true ; }
-    return false ;
-}
-
-/*-----------------------------------------------------------------------------------*/
-
-let isDateTime_LocalFUNC = function(aField){
-    let regDate = /^[0-9]{4}(-[0-9]{2}){2}T[0-9]{2}:[0-9]{2}$/ ;
-
-    let isItFntDate = aField.match(regDate);
-    if( isItFntDate ){ return true ; }
-    return false ;
-}
-
-/*-----------------------------------------------------------------------------------*/
-
-let isMonthFUNC = function(aField){
-    let regMon = /^[0-9]{4}-[0-9]{2}$/ ;
-
-    let isItMonth = aField.match(regMon);
-    if( isItMonth ){ return true ;}
-    return false ;   
-}
-
-/*-----------------------------------------------------------------------------------*/
-
-let isWeekFUNC = function(aField){
-    let regWeek = /^[0-9]{4}-W[0-9]{2}$/ ; 
-
-    let isItWeek = aField.match(regWeek);
-    if(isItWeek){ return true ;}
-    return false ;
-}
-
-/*-----------------------------------------------------------------------------------*/
-
-let isTime = function(aField){
-    let regTime = /^[0-9]{2}:[0-9]{2}$/ ;
-    let isItTime = aField.match(regTime);
-    if(isItTime){ return true ;}
-    return false ;
-}
-
-/*-----------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------*/
 
 let initizeAPI = function(){
     return new FileHandler();
 }
 
 /*----------------------------------------------------------------------------------*/
+
 /**
  * @description  parser the mutipart form data into an object
  * @param {string}   Message - raw message
@@ -236,13 +181,13 @@ let bodyParser = function(Message){
 
     }
 
-    if(cnt>0){ API = initizeAPI(); }
+    if(cnt>0){ API = initizeAPI( ); }
 
     return { document , API };
 }
 
 /*-----------------------------------------------------------------------------------*/
 
-module.exports = { bodyParser , globalFile }
+module.exports = { bodyParser }
 
 
