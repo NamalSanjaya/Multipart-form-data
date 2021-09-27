@@ -15,10 +15,11 @@ const Server = http.createServer( (req,res)=> {
    else if(req.method == "POST"){
     
 
-     stateChanger(req,res);
+     stateChanger(req , { path: './errors' } );
 
      req.on('end',()=>{
-          res.end('AULK NA..')
+          res.end('AULK NA..');
+          console.log('AUlk NA');
      });
 
    }
@@ -27,5 +28,4 @@ const Server = http.createServer( (req,res)=> {
         return
    }
 })
-
 Server.listen( 8000 , ()=> console.log('Listening 8000....') );
