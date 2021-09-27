@@ -1,6 +1,6 @@
 const http = require('http')
 const fs = require('fs');
-const { bodyParser } = require('../Main');
+//const { bodyParser } = require('../Main');
 
 let home = fs.readFileSync('home.html');
 
@@ -26,8 +26,8 @@ const Server = http.createServer( (req,res)=> {
                 
             })
             .on('end',()=> {
-                let output = bodyParser(message);
-                console.log( output );
+               // let output = bodyParser(message);
+               // console.log( output );
                 res.writeHead( 200 , { 'Content-Type':'text/plain' } );
                 res.end( message ) ;
                 return
