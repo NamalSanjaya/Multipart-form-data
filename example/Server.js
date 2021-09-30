@@ -1,6 +1,6 @@
 const http = require('http')
 const fs = require('fs');
-const { getForm , formation } = require('../src/FormOut') ;
+const { formation } = require('../src/FormOut') ;
 
 let home = fs.readFileSync('home.html');
 
@@ -16,17 +16,17 @@ const Server = http.createServer( (req,res)=> {
    else if(req.method == "POST"){
         let Info = {} ;
        
-        formation( req );
+        let Form = formation( req );     /* 'formation' do the body parsing and return a event emitter which emit -
+                                            when data is available */
 
-        getForm.on('data' , (obj)=> {
+        Form.on('data' , (obj)=> { 
             Info = obj ;
-            console.log(obj);
-        })
+            console.log(obj);  // to see how output looks like 
+        });
        
         req.on( 'end' , ()=> {
             res.writeHead( 200 , { 'Content-Type': 'application/json'})
             res.end( JSON.stringify(Info) );
-            // res.end('Bye');
         })
 
       

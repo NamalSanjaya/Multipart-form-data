@@ -4,8 +4,6 @@ const { whatFieldType , parseValue }  =  require( './FieldParse' )
 
 // even emitter class
 class formEmitter extends emitter{   }
-let getForm = new formEmitter();
-
 
 
 
@@ -639,7 +637,7 @@ function nonStatic_ReadLoop( chnk ){
 
 function formation( request ){
     
-
+    let getForm = new formEmitter();
     resetAll() ;
     request.on( 'readable' , () => {
         let chunk;
@@ -679,7 +677,9 @@ function formation( request ){
 
     });
 
+    return getForm ;
+
 }
 
 
-module.exports = { getForm , formation }
+module.exports = {  formation }
