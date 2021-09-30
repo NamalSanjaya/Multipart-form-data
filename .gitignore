@@ -1,5 +1,6 @@
 *.png
-Testing
+Test-phase2/
 .vscode/
 temp/
 errors/
+example/
