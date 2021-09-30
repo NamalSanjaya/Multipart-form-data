@@ -1,5 +1,6 @@
 
 const emitter = require('events');
+const { whatFieldType , parseValue }  =  require( './FieldParse' )
 
 // even emitter class
 class formEmitter extends emitter{   }
@@ -329,7 +330,6 @@ function Hd_filter_L1(chnk){
 }
 
 
-
 /**
  * 
  * @param { Object } resL1  { logic , sepName , sepLine }
@@ -439,10 +439,13 @@ function changeMode( modeTo ){
 function ResultUpdate(){
 
     if(!IsAFile){
-        Result[ sessionResult.name ] = getInitData();
+        let aVal = getInitData();
+        let type = whatFieldType( aVal , IsAFile );
+    
+        Result[ sessionResult.name ] = parseValue( type , aVal );
+
     }
 
-    //console.log('session : ' , sessionResult );
     sessionResult = {} ;
 
     return 
@@ -611,7 +614,7 @@ function filterNstore(chnk){
  * @description remaining data reading in header reading mode
  */
 
-function dataReadLoop( chnk ){
+function nonStatic_ReadLoop( chnk ){
 
     if( searchFor(chnk , /\r\n-{6}[^-]ebKit/ ) ){
 
@@ -651,13 +654,13 @@ function formation( request ){
 
             else if( Mode == 2){
                 // 'ReadingLoop' in file reading mode ;
-                throw new Error('Still not developed  : << Unauthorized access attempt denied >>')
+                throw new Error('Still not developed for static files : << Unauthorized access attempt denied >>')
             }
 
             else if( Mode == 3){
 
                 // header remaining 'data-Reading' ;
-                dataReadLoop(NewChunk);
+                nonStatic_ReadLoop(NewChunk);
 
             }
         }
@@ -677,8 +680,6 @@ function formation( request ){
     });
 
 }
-
-
 
 
 module.exports = { getForm , formation }
