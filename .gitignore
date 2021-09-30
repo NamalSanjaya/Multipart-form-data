@@ -1,9 +1,8 @@
 *.png
-test/
+Test-phase2/
 .vscode/
 temp/
 errors/
+example/
 node_modules/
 package-lock.json
-example/
-*.txt
