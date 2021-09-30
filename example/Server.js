@@ -1,6 +1,6 @@
 const http = require('http')
 const fs = require('fs');
-const { formation } = require('../src/FormOut') ;
+const { formation } = require('../Main') ;
 
 let home = fs.readFileSync('home.html');
 
