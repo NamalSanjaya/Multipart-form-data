@@ -11,9 +11,7 @@ class formEmitter extends emitter{   }
 // global varibles
 let previous, NewChunk , Result , sessionResult , InitData , IsAFile, Mode , chunkSize , currentSize , extraSize , ReadData;
 
-/*-----------------------------------*/
 
-let globalFile ;                         //  Info about files {object} <HTMLTAG name : filename>
 
 /**
  * @description reset to default values
