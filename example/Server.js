@@ -20,14 +20,16 @@ const Server = http.createServer( (req,res)=> {
         let Form = formation( req );     /* 'formation' do the body parsing and return a event emitter which emit -
                                             when data is available */
 
-        Form.on('data' , (obj)=> { 
-            Info = obj ;
-            console.log(obj);  // to see how output looks like 
+        Form.on('data' , (data)=> { 
+            Info = data ;
+            console.log( data );  // to see how output looks like 
         });
        
         req.on( 'end' , ()=> {
+
             res.writeHead( 200 , { 'Content-Type': 'application/json'})
-            res.end( JSON.stringify(Info) );
+            res.end( JSON.stringify(Info) );         // to see the parsed form-data
+
         })
       
    }
