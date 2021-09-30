@@ -4,3 +4,5 @@ Test-phase2/
 temp/
 errors/
 example/
+node_modules/
+package-lock.json

@@ -14,6 +14,7 @@ const Server = http.createServer( (req,res)=> {
    }
 
    else if(req.method == "POST"){
+
         let Info = {} ;
        
         let Form = formation( req );     /* 'formation' do the body parsing and return a event emitter which emit -
@@ -28,7 +29,6 @@ const Server = http.createServer( (req,res)=> {
             res.writeHead( 200 , { 'Content-Type': 'application/json'})
             res.end( JSON.stringify(Info) );
         })
-
       
    }
 
